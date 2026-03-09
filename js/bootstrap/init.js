@@ -1,0 +1,30 @@
+import { initPlan, setPlan } from "../state/plan.js";
+import { startWizard } from "../features/wizard/wizard.js";
+import { render } from "../render/render.js";
+import { subscribe } from "../state/events.js";
+import { initSidebarInteractions } from "../features/sidebar/interactions.js";
+import { sidebarCloseLogic } from "../features/sidebar/close.js";
+
+export function initApp(container) {
+
+  function draw() {
+    render(container);
+  }
+
+  subscribe(draw);
+
+  // initialize global UI behavior once
+  initSidebarInteractions();
+  sidebarCloseLogic();
+
+  const plan = initPlan();
+
+  if (!plan) {
+    startWizard(container, (newPlan) => {
+      setPlan(newPlan);   // emit() → draw()
+    });
+  } else {
+    draw();
+  }
+
+}
