@@ -1,5 +1,5 @@
-const CACHE_STATIC = "plansmart-static-v1";
-const CACHE_DYNAMIC = "plansmart-dynamic-v1";
+const CACHE_STATIC = "plansmart-static-v2";
+const CACHE_DYNAMIC = "plansmart-dynamic-v2";
 
 const STATIC_ASSETS = [
   "./",
@@ -11,6 +11,7 @@ const STATIC_ASSETS = [
 ];
 
 self.addEventListener("install", (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_STATIC).then(cache => cache.addAll(STATIC_ASSETS))
   );
@@ -51,7 +52,7 @@ self.addEventListener("fetch", (event) => {
       }).catch(() => {
 
         if (event.request.destination === "document") {
-          return caches.match("/index.html");
+          return caches.match("./index.html");
         }
 
       });
