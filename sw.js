@@ -7,7 +7,7 @@ const STATIC_ASSETS = [
   "./manifest.json",
   "./css/styles.css",
   "./js/main.js",
-  "./favicon.png"
+  "./icons/favicon.png"
 ];
 
 self.addEventListener("install", (event) => {
@@ -26,12 +26,32 @@ self.addEventListener("activate", (event) => {
           .filter(k => ![CACHE_STATIC, CACHE_DYNAMIC].includes(k))
           .map(k => caches.delete(k))
       )
-    )
+    ).then(() => self.clients.claim())
   );
 
 });
 
 self.addEventListener("fetch", (event) => {
+
+  if (event.request.mode === "navigate") {
+
+    event.respondWith(
+      fetch(event.request)
+        .then(res => {
+
+          const clone = res.clone();
+          caches.open(CACHE_STATIC).then(cache => {
+            cache.put("./index.html", clone);
+          });
+
+          return res;
+
+        })
+        .catch(() => caches.match("./index.html"))
+    );
+
+    return;
+  }
 
   event.respondWith(
 
@@ -48,12 +68,6 @@ self.addEventListener("fetch", (event) => {
         });
 
         return res;
-
-      }).catch(() => {
-
-        if (event.request.destination === "document") {
-          return caches.match("./index.html");
-        }
 
       });
 
