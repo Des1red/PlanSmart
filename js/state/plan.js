@@ -16,21 +16,20 @@ export function setPlan(newPlan) {
 }
 
 export function initPlan() {
-
   plan = loadPlan();
+  return plan;
+}
 
-  if (plan) {
-    if (!plan.streak) {
-      plan.streak = {
-        current: 0,
-        best: 0,
-        lastEvaluatedDate: null
-      };
-    }
-    recalcCalendar();
+export function ensurePlanIntegrity(plan) {
+
+  if (!plan.streak) {
+    plan.streak = {
+      current: 0,
+      best: 0,
+      lastEvaluatedDate: null
+    };
   }
 
-  return plan;
 }
 
 export function addTask(task) {
