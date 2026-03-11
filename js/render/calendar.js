@@ -7,17 +7,24 @@ export function renderCalendar(container) {
   const plan = getPlan();
 
   container.innerHTML = "";
-
+  const today = plan.calendar.today;
   if (!plan.calendar || !plan.calendar.days || plan.calendar.days.length === 0) {
     container.appendChild(
       el("p", { text: "No calendar generated yet." })
     );
     return;
   }
+
   container.appendChild(
     el("h2", {
       class: "calendar-month",
       text: `${plan.calendar.month} ${plan.calendar.year}`
+    })
+  );
+  container.appendChild(
+    el("div", {
+      class: "calendar-streak",
+      text: `🔥 Streak: ${plan.streak?.current || 0} days`
     })
   );
   const grid = el("div", { class: "calendar-grid" });
@@ -31,6 +38,9 @@ export function renderCalendar(container) {
     ]);
 
     weekDays.forEach(day => {
+      const isToday = day.day === today;
+      const done = day.done ? day.done.length : 0;
+      const total = day.tasks.length;
 
       const items = day.tasks.map(id => {
 
@@ -45,10 +55,24 @@ export function renderCalendar(container) {
 
       weekBlock.appendChild(
         el("div", {
-          class: "calendar-day",
-          onclick: () => openDay(day)
+          class: [
+            "calendar-day",
+            done === total && total > 0 ? "calendar-day-complete" : "",
+            isToday ? "calendar-day-today" : ""
+          ].join(" "),
+          onclick: () => openDay(day, isToday)
         }, [
-          el("h3", { text: `Day ${day.day}` }),
+          el("h3", {
+            text: isToday
+              ? `Day ${day.day} (today)`
+              : `Day ${day.day}`
+          }),
+
+          el("div", {
+            class: "calendar-progress",
+            text: `${done} / ${total} done`
+          }),
+
           ...items
         ])
       );
@@ -59,5 +83,13 @@ export function renderCalendar(container) {
   }
 
   container.appendChild(grid);
+  const todayWeek = Math.floor((today - 1) / 7);
+  const weeks = grid.querySelectorAll(".calendar-week");
 
+  if (weeks[todayWeek]) {
+    weeks[todayWeek].scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  }
 }

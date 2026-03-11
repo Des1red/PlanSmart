@@ -11,11 +11,25 @@ export function getPlan() {
 export function setPlan(newPlan) {
   plan = newPlan;
   savePlan(plan);
+  recalcCalendar();
   emit();
 }
 
 export function initPlan() {
+
   plan = loadPlan();
+
+  if (plan) {
+    if (!plan.streak) {
+      plan.streak = {
+        current: 0,
+        best: 0,
+        lastEvaluatedDate: null
+      };
+    }
+    recalcCalendar();
+  }
+
   return plan;
 }
 
@@ -61,14 +75,4 @@ function recalcCalendar() {
   }
 
   plan.calendar = generateCalendar(plan);
-}
-
-let calendarState = null;
-
-export function setCalendar(cal) {
-  calendarState = cal;
-}
-
-export function getCalendar() {
-  return calendarState;
 }

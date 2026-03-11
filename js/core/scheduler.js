@@ -1,6 +1,7 @@
 export function generateCalendar(plan) {
 
   const now = new Date();
+  const today = now.getDate();
   const month = now.toLocaleString("default", { month: "long" });
   const year = now.getFullYear();
 
@@ -77,6 +78,7 @@ export function generateCalendar(plan) {
   return {
     month,
     year,
+    today,
     weeks: Math.ceil(days / 7),
     days: calendar
   };
