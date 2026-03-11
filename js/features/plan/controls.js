@@ -1,4 +1,4 @@
-import { getPlan, setPlan } from "../../state/plan.js";
+import { getPlan, setPlan, ensurePlanIntegrity  } from "../../state/plan.js";
 import { el } from "../../components/dom.js";
 
 export function exportPlan() {
