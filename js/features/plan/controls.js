@@ -30,6 +30,7 @@ export function importPlan(file) {
 
     try {
       const plan = JSON.parse(reader.result);
+      ensurePlanIntegrity(plan);
       setPlan(plan);
     } catch {
       alert("Invalid plan file");

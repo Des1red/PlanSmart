@@ -17,6 +17,9 @@ export function setPlan(newPlan) {
 
 export function initPlan() {
   plan = loadPlan();
+  if (plan) {
+    ensurePlanIntegrity(plan);
+  }
   return plan;
 }
 
