@@ -61,9 +61,11 @@ export function generateCalendar(plan) {
     bestDay = samePlaceDay || bestDay;
 
     if (!bestDay) {
-      bestDay = calendar
-        .filter(day => !day.tasks.includes(task.id))
-        .reduce((a, b) => (a.total < b.total ? a : b), null);
+      const candidates = calendar.filter(day => !day.tasks.includes(task.id));
+          
+      if (candidates.length > 0) {
+        bestDay = candidates.reduce((a, b) => (a.total < b.total ? a : b));
+      }
     }
     if (!bestDay) continue;
     bestDay.tasks.push(task.id);
