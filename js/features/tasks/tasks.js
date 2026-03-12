@@ -6,13 +6,19 @@ function makeId() {
 
 export function createTask(data) {
 
+  let freq;
+
+  if (data.type === "daily") freq = 7;
+  else if (data.type === "monthly") freq = 1;
+  else freq = Math.min(7, Math.max(1, data.timesPerWeek));
+
   const task = {
-    id:  makeId(),
+    id: makeId(),
     name: data.name,
     place: data.place,
     time: data.time,
     type: data.type,
-    timesPerWeek: data.timesPerWeek
+    timesPerWeek: freq
   };
 
   if (!task.name || !task.time) return;
@@ -26,13 +32,19 @@ export function deleteTask(id) {
 
 export function editTask(id, data) {
 
+  let freq;
+
+  if (data.type === "daily") freq = 7;
+  else if (data.type === "monthly") freq = 1;
+  else freq = Math.min(7, Math.max(1, data.timesPerWeek));
+
   const task = {
     id,
     name: data.name,
     place: data.place,
     time: data.time,
     type: data.type,
-    timesPerWeek: data.timesPerWeek
+    timesPerWeek: freq
   };
 
   if (!task.name || !task.time) return;

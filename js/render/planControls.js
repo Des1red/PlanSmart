@@ -1,5 +1,5 @@
 import { el } from "../components/dom.js";
-import { exportPlan, importPlan, resetPlan } from "../features/plan/controls.js";
+import { exportPlan, importPlan, resetPlan, changeDailyHours } from "../features/plan/controls.js";
 
 export function renderPlanControls(container) {
 
@@ -29,13 +29,22 @@ export function renderPlanControls(container) {
     onclick: resetPlan
   });
 
+  const hoursBtn = el("button", {
+    text: "Daily Hours",
+    onclick: changeDailyHours
+  });
+  
   container.appendChild(
-    el("div",  { class: "plan-controls" }, [
+    el("div", { class: "plan-controls" }, [
       el("h3", { text: "Plan Controls" }),
-      exportBtn,
-      importBtn,
-      importInput,
-      resetBtn
+    
+      el("div", { class: "plan-controls-buttons" }, [
+        exportBtn,
+        importBtn,
+        hoursBtn,
+        importInput,
+        resetBtn
+      ])
     ])
   );
 

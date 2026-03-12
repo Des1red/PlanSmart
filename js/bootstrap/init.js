@@ -19,18 +19,48 @@ export function initApp(container) {
   initSidebarInteractions();
   sidebarCloseLogic();
 
+  initializePlanState(container, draw);
+  registerServiceWorker()
+}
+
+function initializePlanState(container, draw) {
+
   const plan = initPlan();
 
   if (!plan) {
     startWizard(container, (newPlan) => {
-      setPlan(newPlan);   // emit() → draw()
+      setPlan(newPlan);
     });
-  } else {
-    ensurePlanIntegrity(plan);
-    if (evaluateStreak(plan)) {
-      savePlan(plan);
-    }
-    draw();
+    return;
   }
+
+  let changed = false;
+
+  changed = ensurePlanIntegrity(plan) || changed;
+
+  if (evaluateStreak(plan)) {
+    changed = true;
+  }
+
+  if (changed) {
+    savePlan(plan);
+  }
+
+  draw();
+}
+
+function registerServiceWorker() {
+
+  if (!("serviceWorker" in navigator)) return;
+
+  navigator.serviceWorker.register("./sw.js");
+
+  let refreshing = false;
+
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (refreshing) return;
+    refreshing = true;
+    window.location.reload();
+  });
 
 }

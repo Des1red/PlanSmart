@@ -1,13 +1,14 @@
 import { el } from "../components/dom.js";
 import { getPlan } from "../state/plan.js";
 import { openDay } from "../features/calendar/calendar.js";
+import { getDateInfo } from "../state/date.js";
 
 export function renderCalendar(container) {
 
   const plan = getPlan();
-
+  const { today } = getDateInfo();
   container.innerHTML = "";
-  const today = plan.calendar.today;
+
   if (!plan.calendar || !plan.calendar.days || plan.calendar.days.length === 0) {
     container.appendChild(
       el("p", { text: "No calendar generated yet." })

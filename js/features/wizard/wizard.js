@@ -1,5 +1,5 @@
-import { savePlan } from "../../storage/storage.js";
 import { el } from "../../components/dom.js";
+import { uiAlert } from "../../components/ui.js";
 
 export function startWizard(container, onComplete) {
 
@@ -13,23 +13,23 @@ export function startWizard(container, onComplete) {
   const button = el("button", {
     text: "Create Plan",
     onclick: () => {
-  
+    
       const hours = Number(input.value);
-  
-      if (!hours || hours < 1) {
-        alert("Please enter at least 1 hour.");
+    
+      if (!hours || hours <= 0 || hours > 24) {
+        uiAlert("Please enter valid hours (1–24).");
         return;
       }
-  
+    
       const plan = {
         version: 1,
         hoursPerDay: hours,
         tasks: [],
-        calendar: []
+        calendar: null
       };
-  
-      savePlan(plan);
+    
       onComplete(plan);
+    
     }
   });
 

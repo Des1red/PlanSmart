@@ -1,12 +1,9 @@
+import { getDateInfo } from "../state/date.js";
+
 export function generateCalendar(plan) {
 
-  const now = new Date();
-  const today = now.getDate();
-  const month = now.toLocaleString("default", { month: "long" });
-  const year = now.getFullYear();
-
+  const { now, month, year } = getDateInfo();
   const days = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-
   const dailyCapacity = plan.hoursPerDay * 60;
 
   const calendar = [];
@@ -27,7 +24,7 @@ export function generateCalendar(plan) {
   for (const task of occurrences) {
 
     let bestDay = null;
-    let samePlaceDay = null;
+    let bestScore = Infinity;
 
     for (const day of calendar) {
     
@@ -38,34 +35,55 @@ export function generateCalendar(plan) {
     
       const key = task.id + "-" + weekIndex;
       const weekCount = weeklyCount.get(key) || 0;
-
+    
       const taskInfo = taskMap.get(task.id);
-      if (taskInfo.type !== "monthly" && weekCount >= taskInfo.timesPerWeek) continue;    
-        const hasSamePlace = day.tasks.some(id => {
-        const t = taskMap.get(id);        
+    
+      if (taskInfo.type !== "monthly" && weekCount >= taskInfo.timesPerWeek) continue;
+    
+      /* base load score */
+      let score = day.total;
+    
+      /* spacing penalty (avoid clustering) */
+      const distancePenalty = calendar.reduce((penalty, d) => {
+      
+        if (!d.tasks.includes(task.id)) return penalty;
+      
+        const dist = Math.abs(d.day - day.day);
+      
+        if (dist === 0) return penalty;
+      
+        return penalty + Math.max(0, 4 - dist) * 10;
+      
+      }, 0);
+    
+      score += distancePenalty;
+    
+      /* reward grouping same place */
+      const hasSamePlace = day.tasks.some(id => {
+        const t = taskMap.get(id);
         return t && t.place === task.place;
       });
     
-      if (hasSamePlace) {
-        if (!samePlaceDay || day.total < samePlaceDay.total) {
-          samePlaceDay = day;
-        }
-      }
+      if (hasSamePlace) score -= 5;
     
-      if (!bestDay || day.total < bestDay.total) {
+      if (score < bestScore) {
+        bestScore = score;
         bestDay = day;
       }
     
     }
 
-    bestDay = samePlaceDay || bestDay;
-
     if (!bestDay) {
-      const candidates = calendar.filter(day => !day.tasks.includes(task.id));
-          
+    
+      const candidates = calendar.filter(day =>
+        !day.tasks.includes(task.id) &&
+        day.total + task.time <= dailyCapacity
+      );
+    
       if (candidates.length > 0) {
         bestDay = candidates.reduce((a, b) => (a.total < b.total ? a : b));
       }
+    
     }
     if (!bestDay) continue;
     bestDay.tasks.push(task.id);
@@ -80,7 +98,6 @@ export function generateCalendar(plan) {
   return {
     month,
     year,
-    today,
     weeks: Math.ceil(days / 7),
     days: calendar
   };
