@@ -8,6 +8,6 @@ export function navigate(view) {
 
   sidebar.classList.remove("open");
 
-  setView(view);
+  setTimeout(() => setView(view), 0);
 
 }

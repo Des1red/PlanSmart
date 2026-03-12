@@ -1,5 +1,5 @@
-const CACHE_STATIC = "plansmart-static-v5";
-const CACHE_DYNAMIC = "plansmart-dynamic-v5";
+const CACHE_STATIC = "plansmart-static-v6";
+const CACHE_DYNAMIC = "plansmart-dynamic-v6";
 
 const STATIC_ASSETS = [
   "./",
@@ -7,7 +7,9 @@ const STATIC_ASSETS = [
   "./manifest.json",
   "./css/styles.css",
   "./js/main.js",
-  "./icons/favicon.png"
+  "./icons/favicon.png",
+  "./icons/icon-192-v2.png",
+  "./icons/icon-512-v2.png"
 ];
 
 self.addEventListener("install", (event) => {
