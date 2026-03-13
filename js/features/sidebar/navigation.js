@@ -4,10 +4,10 @@ export function navigate(view) {
 
   const sidebar = document.getElementById("sidebar");
 
-  if (!sidebar.classList.contains("open")) return;
+  if (sidebar.classList.contains("open")) {
+    sidebar.classList.remove("open");
+  }
 
-  sidebar.classList.remove("open");
-
-  setTimeout(() => setView(view), 0);
+  setView(view);
 
 }

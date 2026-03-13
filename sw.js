@@ -1,5 +1,5 @@
-const CACHE_STATIC = "plansmart-static-v6";
-const CACHE_DYNAMIC = "plansmart-dynamic-v6";
+const CACHE_STATIC = "plansmart-static-v7";
+const CACHE_DYNAMIC = "plansmart-dynamic-v7";
 
 const STATIC_ASSETS = [
   "./",

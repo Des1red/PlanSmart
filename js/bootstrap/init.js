@@ -4,6 +4,7 @@ import { render } from "../render/render.js";
 import { subscribe } from "../state/events.js";
 import { initSidebarInteractions } from "../features/sidebar/interactions.js";
 import { sidebarCloseLogic } from "../features/sidebar/close.js";
+import { renderSidebar } from "../render/sidebar.js";
 import { evaluateStreak } from "../state/streak.js";
 import { savePlan } from "../storage/storage.js";
 
@@ -15,12 +16,9 @@ export function initApp(container) {
 
   subscribe(draw);
 
-  // initialize global UI behavior once
-  initSidebarInteractions();
-  sidebarCloseLogic();
-
   initializePlanState(container, draw);
-  registerServiceWorker()
+
+  registerServiceWorker();
 }
 
 function initializePlanState(container, draw) {
@@ -28,9 +26,19 @@ function initializePlanState(container, draw) {
   const plan = initPlan();
 
   if (!plan) {
+
     startWizard(container, (newPlan) => {
+
       setPlan(newPlan);
+
+      renderSidebar();
+      initSidebarInteractions();
+      sidebarCloseLogic();
+
+      draw();
+
     });
+
     return;
   }
 
@@ -46,9 +54,12 @@ function initializePlanState(container, draw) {
     savePlan(plan);
   }
 
+  renderSidebar();
+  initSidebarInteractions();
+  sidebarCloseLogic();
+
   draw();
 }
-
 function registerServiceWorker() {
 
   if (!("serviceWorker" in navigator)) return;

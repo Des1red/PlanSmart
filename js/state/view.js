@@ -1,7 +1,6 @@
 import { emit } from "./events.js";
 
-let currentView = "plan";
-
+let currentView = "calendar";
 export function getView() {
   return currentView;
 }

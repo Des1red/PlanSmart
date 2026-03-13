@@ -137,7 +137,7 @@ body::before {
   top: 0;
   left: 0;
   width: 220px;
-  height: 100vh;
+  height: 100dvh;
   background: var(--sidebar-bg);
   display: flex;
   flex-direction: column;
@@ -1026,11 +1026,13 @@ hr {
 /* ── Responsive ─────────────────────────────────── */
 @media (max-width: 768px) {
   body {
+    min-height: 100dvh;
     height: auto;
-     min-height: 100dvh;
     overflow-y: auto;
   }
   #sidebar {
+    height: 100dvh;
+    overflow-y: auto;
     width: 175px;
     transform: translateX(calc(-100% + 10px));
   }
