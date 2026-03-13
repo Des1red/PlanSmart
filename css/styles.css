@@ -170,9 +170,14 @@ body::before {
 }
 
 /* Open on hover (desktop) */
-#sidebar:hover,
 #sidebar.open {
   transform: translateX(0);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #sidebar:hover {
+    transform: translateX(0);
+  }
 }
 
 /* Overlay (tap-to-close on mobile) */
@@ -194,7 +199,6 @@ body::before {
 /* Dim & block app content when sidebar is .open (tap mode) */
 #sidebar.open ~ #app {
   opacity: 0.7;
-  pointer-events: none;
 }
 
 #app {
