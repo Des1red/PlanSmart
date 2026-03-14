@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"plansmart/internal/logger"
 	"plansmart/internal/rooms"
 
 	"github.com/gorilla/websocket"
@@ -33,12 +34,11 @@ func roomWS(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-
 	name := r.URL.Query().Get("name")
 	if name == "" {
 		name = rooms.GenerateName()
 	}
-
+	logger.DevLog(logger.ServerLog, "WS connect: room %s, name: %s", code, name)
 	client := &rooms.Client{
 		Conn: conn,
 		Send: make(chan []byte, 256),
@@ -60,7 +60,7 @@ func readPump(room *rooms.Room, client *rooms.Client) {
 
 	defer func() {
 		client.Conn.Close()
-		room.RemoveClient(client)
+		room.RemoveConnection(client)
 		room.BroadcastUsers()
 	}()
 
@@ -79,12 +79,19 @@ func readPump(room *rooms.Room, client *rooms.Client) {
 		if data["type"] == "PLAN_UPDATE" {
 			room.Plan = msg
 			room.Broadcast(msg, client)
+			logger.DevLog(logger.ServerLog, "PLAN_UPDATE in room %s from %s", room.Code, client.Name)
 		}
 		if data["type"] == "SET_NAME" {
 			if name, ok := data["name"].(string); ok && name != "" {
-				client.Name = name
+				room.UpdateMemberName(client, name) // 👈
 				room.BroadcastUsers()
 			}
+		}
+		if data["type"] == "LEAVE" {
+			room.RemoveMember(client) // removes from both Members and Clients
+			room.BroadcastUsers()
+			logger.DevLog(logger.ServerLog, "LEAVE received in room %s from %s", room.Code, client.Name)
+			return
 		}
 	}
 }

@@ -1,10 +1,11 @@
 package rooms
 
 import (
+	"plansmart/internal/logger"
 	"time"
 )
 
-const roomTTL = 5 * time.Minute
+const roomTTL = 10 * time.Minute
 
 func StartCleanup() {
 	go func() {
@@ -19,9 +20,10 @@ func StartCleanup() {
 				for code, room := range M.rooms {
 					room.mu.RLock()
 					last := room.LastActivity
-					empty := len(room.Clients) == 0
+					empty := len(room.Members) == 0
 					room.mu.RUnlock()
 					if empty && now.Sub(last) > roomTTL {
+						logger.DevLog(logger.RoomLog, "deleting room %s (empty, TTL expired)", code)
 						delete(M.rooms, code)
 						go DeleteFromDB(code)
 					}

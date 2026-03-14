@@ -2,7 +2,18 @@ import { loadName } from "../storage/storage.js";
 let socket = null;
 
 export function getApi() {
+  if (location.hostname === "localhost" || location.hostname.match(/^192\.168\./)) {
+    return "192.168.1.110:8080";
+  }
   return "plansmart-production.up.railway.app";
+}
+
+export function getProtocol() {
+  return location.protocol === "https:" ? "https://" : "http://";
+}
+
+export function getWsProtocol() {
+  return location.protocol === "https:" ? "wss://" : "ws://";
 }
 
 export function connect(code, options = {}) {
@@ -10,7 +21,7 @@ export function connect(code, options = {}) {
 
   const savedName = loadName();
   const nameParam = savedName ? `?name=${encodeURIComponent(savedName)}` : "";
-  socket = new WebSocket(`wss://${getApi()}/rooms/${code}/ws${nameParam}`);
+  socket = new WebSocket(`${getWsProtocol()}${getApi()}/rooms/${code}/ws${nameParam}`);
 
   socket.onmessage = (e) => {
     let msg;
@@ -42,6 +53,11 @@ export function sendPlan(plan) {
 export function sendName(name) {
   if (!socket || socket.readyState !== WebSocket.OPEN) return;
   socket.send(JSON.stringify({ type: "SET_NAME", name }));
+}
+
+export function sendLeave() {
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+    socket.send(JSON.stringify({ type: "LEAVE" }));
 }
 
 export function disconnect() {

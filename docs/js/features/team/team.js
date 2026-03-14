@@ -1,4 +1,4 @@
-import { connect, getApi, disconnect, sendName } from "../../sync/socket.js";
+import { connect, getApi, getProtocol, disconnect, sendName, sendLeave } from "../../sync/socket.js";
 import { uiAlert } from "../../components/ui.js";
 import { saveRoom, loadRoom, deleteRoom, saveName } from "../../storage/storage.js";
 import { emit } from "../../state/events.js";
@@ -55,7 +55,7 @@ export function showRoom(code) {
 }
 
 export async function createRoom() {
-  const res = await fetch(`https://${getApi()}/rooms`, { method: "POST" });
+  const res = await fetch(`${getProtocol()}${getApi()}/rooms`, { method: "POST" });
   const data = await res.json();
   connect(data.code, { broadcastOnOpen: true });
   saveRoom(data.code);
@@ -65,7 +65,7 @@ export async function createRoom() {
 }
 export async function joinRoom(code) {
 
-  const res = await fetch(`https://${getApi()}/rooms/${code}`);
+  const res = await fetch(`${getProtocol()}${getApi()}/rooms/${code}`);
 
   if (!res.ok) {
     uiAlert("Room not found");
@@ -87,6 +87,7 @@ export async function setMyName(name) {
 }
 
 export function leaveRoom() {
+  sendLeave();
   disconnect();
   deleteRoom();
   currentRoom = null;

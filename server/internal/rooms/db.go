@@ -19,6 +19,7 @@ func LoadFromDB() error {
 			Code:         row.Code,
 			Plan:         row.Plan,
 			LastActivity: time.Now(),
+			Members:      make(map[string]bool),
 			Clients:      make(map[*Client]bool),
 		}
 	}

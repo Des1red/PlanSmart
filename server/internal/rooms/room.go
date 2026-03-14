@@ -20,6 +20,7 @@ func (m *Manager) Create() *Room {
 	room := &Room{
 		Code:         code,
 		LastActivity: time.Now(),
+		Members:      make(map[string]bool),
 		Clients:      make(map[*Client]bool),
 	}
 
@@ -42,7 +43,7 @@ func (r *Room) Empty() bool {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
-	return len(r.Clients) == 0
+	return len(r.Members) == 0
 }
 
 func (m *Manager) Delete(code string) {

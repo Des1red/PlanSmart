@@ -10,7 +10,8 @@ type Room struct {
 	Plan         []byte
 	LastActivity time.Time
 
-	Clients map[*Client]bool
+	Members map[string]bool  // who belongs in the group
+	Clients map[*Client]bool // who is connected right now
 	mu      sync.RWMutex
 }
 
