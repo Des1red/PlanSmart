@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS rooms (
+    code TEXT PRIMARY KEY,
+    last_activity DATETIME NOT NULL
+);

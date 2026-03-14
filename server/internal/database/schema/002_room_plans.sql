@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS room_plans (
+    code TEXT PRIMARY KEY REFERENCES rooms(code) ON DELETE CASCADE,
+    plan JSON NOT NULL,
+    saved_at DATETIME NOT NULL
+);
