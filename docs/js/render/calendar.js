@@ -2,6 +2,7 @@ import { el } from "../components/dom.js";
 import { getPlan } from "../state/plan.js";
 import { openDay } from "../features/calendar/calendar.js";
 import { getDateInfo } from "../state/date.js";
+import { getShouldScrollToToday, setshouldScrollToToday } from "../state/sidebar.js";
 
 export function renderCalendar(container) {
 
@@ -87,10 +88,8 @@ export function renderCalendar(container) {
   const todayWeek = Math.floor((today - 1) / 7);
   const weeks = grid.querySelectorAll(".calendar-week");
 
-  if (weeks[todayWeek]) {
-    weeks[todayWeek].scrollIntoView({
-      behavior: "smooth",
-      block: "center"
-    });
+  if (getShouldScrollToToday() && weeks[todayWeek]) {
+    weeks[todayWeek].scrollIntoView({ behavior: "smooth", block: "center" });
+    setshouldScrollToToday(false) // consume it — won't fire again until next navigate
   }
 }

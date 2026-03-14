@@ -57,6 +57,7 @@ export async function resetPlan() {
   const proceed = await uiConfirm("Delete your cleaning plan?");
   if (!proceed) return;
   localStorage.removeItem("cleaning_plan");
+  localStorage.removeItem("cleaning_room");
   location.reload();
 }
 

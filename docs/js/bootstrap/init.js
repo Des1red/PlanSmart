@@ -7,6 +7,7 @@ import { sidebarCloseLogic } from "../features/sidebar/close.js";
 import { renderSidebar } from "../render/sidebar.js";
 import { evaluateStreak } from "../state/streak.js";
 import { savePlan } from "../storage/storage.js";
+import { restoreRoom } from "../features/team/team.js";
 
 export function initApp(container) {
 
@@ -34,7 +35,7 @@ function initializePlanState(container, draw) {
       renderSidebar();
       initSidebarInteractions();
       sidebarCloseLogic();
-
+      restoreRoom(); 
       draw();
 
     });
@@ -57,7 +58,7 @@ function initializePlanState(container, draw) {
   renderSidebar();
   initSidebarInteractions();
   sidebarCloseLogic();
-
+  restoreRoom()
   draw();
 }
 function registerServiceWorker() {

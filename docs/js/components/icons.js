@@ -66,3 +66,22 @@ export function iconSidebarHint(size = 24) {
     })
   ]);
 }
+
+export function iconUsers(size = 18) {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("width", size);
+  svg.setAttribute("height", size);
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("fill", "none");
+  svg.setAttribute("stroke", "currentColor");
+  svg.setAttribute("stroke-width", "2");
+
+  svg.innerHTML = `
+    <circle cx="9" cy="8" r="3"/>
+    <circle cx="17" cy="10" r="2.5"/>
+    <path d="M3 20c0-3 3-5 6-5s6 2 6 5"/>
+    <path d="M14 20c.3-2 2-3.5 4-3.5 1.7 0 3 1 3 2.5"/>
+  `;
+
+  return svg;
+}

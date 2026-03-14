@@ -97,7 +97,10 @@
 /* ── Reset & Base ───────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { font-size: 15px; }
+html { 
+  font-size: 15px; 
+  height: -webkit-fill-available;
+}
 
 body {
   font-family: 'DM Sans', sans-serif;
@@ -105,6 +108,7 @@ body {
   color: var(--text-primary);
   display: flex;
   height: 100vh;
+  min-height: -webkit-fill-available;
   overflow: hidden;
   transition: background var(--transition), color var(--transition);
   position: relative;
@@ -138,6 +142,7 @@ body::before {
   left: 0;
   width: 220px;
   height: 100dvh;
+  height: -webkit-fill-available;
   background: var(--sidebar-bg);
   display: flex;
   flex-direction: column;
@@ -984,6 +989,114 @@ hr {
   animation: fadeSlideUp 0.35s cubic-bezier(.2,.8,.2,1) both;
 }
 
+/* ── Team Panel ─────────────────────────────────── */
+.team-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 480px;
+}
+
+.team-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.team-join-row {
+  display: flex;
+  gap: 8px;
+}
+
+.team-join-row input {
+  flex: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+.team-join-row button {
+  flex-shrink: 0;
+}
+
+.team-room-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.team-room-title {
+  margin-bottom: 0;
+  color: var(--accent);
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-size: 1rem;
+}
+
+.team-users-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.team-users {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.team-users li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+.team-users li.team-user-count {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-strong);
+    padding-bottom: 8px;
+    margin-bottom: 2px;
+}
+
+.team-users li.team-user-count::before {
+    display: none;
+}
+.team-users li:last-child {
+  border-bottom: none;
+}
+
+.team-users li::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  box-shadow: 0 0 6px rgba(0, 196, 167, 0.5);
+}
+.team-name-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.team-name-row input {
+  flex: 1;
+}
 /* ── Alert Modal ─────────────────────────────── */
 
 .alert-overlay {
@@ -1036,6 +1149,7 @@ hr {
   }
   #sidebar {
     height: 100dvh;
+    height: -webkit-fill-available;
     overflow-y: auto;
     width: 175px;
     transform: translateX(calc(-100% + 10px));

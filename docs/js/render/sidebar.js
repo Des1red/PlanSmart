@@ -5,7 +5,8 @@ import { navigate } from "../features/sidebar/navigation.js";
 
 const ROUTE_ICONS = {
   plan: icons.iconPlan,
-  calendar: icons.iconCalendar
+  calendar: icons.iconCalendar,
+  team: icons.iconUsers
 };
 
 export function renderSidebar() {

@@ -119,7 +119,7 @@ function createAddButton(plan, inputs, state) {
     typeSelect,
     freqInput
   } = inputs;
-
+  const btn = el("button", { text: "Add Task" });
   return el("button", {
     text: "Add Task",
     onclick: () => {
@@ -162,8 +162,8 @@ function createAddButton(plan, inputs, state) {
 
         state.editingId = null;
 
-        this.textContent = "Add Task";
-
+        btn.textContent = "Add Task";
+        
       } else {
 
         createTask(data);

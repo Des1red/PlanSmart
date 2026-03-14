@@ -1,4 +1,5 @@
 import { setView } from "../../state/view.js";
+import { setshouldScrollToToday } from "../../state/sidebar.js";
 
 export function navigate(view) {
 
@@ -13,6 +14,6 @@ export function navigate(view) {
 
   // Second tap navigates
   sidebar.classList.remove("open");
+  if (view === "calendar") setshouldScrollToToday(true);
   setView(view);
-
 }

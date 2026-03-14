@@ -2,6 +2,7 @@ import { loadPlan, savePlan } from "../storage/storage.js";
 import { emit } from "./events.js";
 import { generateCalendar } from "../core/scheduler.js";
 import { uiAlert } from "../components/ui.js";
+import { sendPlan } from "../sync/socket.js";
 
 let plan = null;
 
@@ -9,7 +10,7 @@ export function getPlan() {
   return plan;
 }
 
-export function setPlan(newPlan) {
+export function setPlan(newPlan,  remote = false) {
 
   ensurePlanIntegrity(newPlan);
 
@@ -30,9 +31,9 @@ export function setPlan(newPlan) {
   plan = newPlan;
 
   savePlan(plan);
-  recalcCalendar();
+   if (!remote) recalcCalendar(); 
   emit();
-
+  if (!remote) broadcastPlan();
 }
 
 export function initPlan() {
@@ -99,6 +100,15 @@ export function ensurePlanIntegrity(plan) {
   return changed;
 }
 
+function broadcastPlan() {
+  sendPlan({
+    tasks: plan.tasks,
+    hoursPerDay: plan.hoursPerDay,
+    streak: plan.streak,
+    calendar: plan.calendar
+  });
+}
+
 export function addTask(task) {
   plan.tasks.push(task);
 
@@ -106,6 +116,7 @@ export function addTask(task) {
 
   savePlan(plan);
   emit();
+  broadcastPlan();
 }
 
 export function removeTask(id) {
@@ -116,6 +127,7 @@ export function removeTask(id) {
 
   savePlan(plan);
   emit();
+  broadcastPlan();
 }
 
 export function updateTask(id, updated) {
@@ -129,18 +141,89 @@ export function updateTask(id, updated) {
 
   savePlan(plan);
   emit();
+  broadcastPlan();
+}
+
+export function toggleTaskDone(dayNumber, taskId, checked) {
+
+  const day = plan.calendar.days.find(d => d.day === dayNumber);
+  if (!day) return;
+
+  if (!Array.isArray(day.done)) {
+    day.done = [];
+  }
+
+  if (checked) {
+    if (!day.done.includes(taskId)) {
+      day.done.push(taskId);
+    }
+  } else {
+    day.done = day.done.filter(id => id !== taskId);
+  }
+
+  savePlan(plan);
+  emit();
+  broadcastPlan();
 }
 
 function recalcCalendar() {
   if (!plan.tasks || plan.tasks.length === 0) {
-    plan.calendar = {
+    plan.calendar = { month: null, year: null, weeks: 0, days: [] };
+    return;
+  }
+
+  const doneMap = new Map();
+  if (plan.calendar?.days) {
+    for (const day of plan.calendar.days) {
+      if (day.done?.length) {
+        doneMap.set(day.day, day.done);
+      }
+    }
+  }
+
+  plan.calendar = generateCalendar(plan);
+
+  const validIds = new Set(plan.tasks.map(t => t.id)); // 👈
+
+  for (const day of plan.calendar.days) {
+    if (doneMap.has(day.day)) {
+      day.done = doneMap.get(day.day).filter(id => validIds.has(id)); // 👈
+    }
+  }
+}
+
+window.__applyRemotePlan = function(remotePlan) {
+
+  setPlan({
+    tasks: remotePlan.tasks || [],
+    hoursPerDay: remotePlan.hoursPerDay || 2,
+    streak: remotePlan.streak || {
+      current: 0,
+      best: 0,
+      lastEvaluatedDate: null
+    },
+    calendar: remotePlan.calendar || {
       month: null,
       year: null,
       weeks: 0,
       days: []
-    };
-    return;
+    }
+  },true);
+
+};
+
+window.__broadcastPlan = function () {
+
+  if (!plan) {
+    plan = loadPlan();
+    if (!plan) return;
   }
 
-  plan.calendar = generateCalendar(plan);
-}
+  sendPlan({
+    tasks: plan.tasks,
+    hoursPerDay: plan.hoursPerDay,
+    streak: plan.streak,
+    calendar: plan.calendar
+  });
+
+};
